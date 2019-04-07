@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: zipkin
+  name: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: zipkin
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: zipkin
+    spec:
+      containers:
+      - image: openzipkin/zipkin
+        ports:
+        - containerPort: 9411
+        name: zipkin
+        resources: {}
+status: {}
