@@ -24,3 +24,17 @@ spec:
         name: zipkin
         resources: {}
 status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9411
+    targetPort: 9411
+    nodePort: 32766
+  selector:
+    run: zipkin
