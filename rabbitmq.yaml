@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: rabbitmq
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: rabbitmq
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: rabbitmq
+    spec:
+      containers:
+      - image: rabbitmq:3-management
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-service
+spec:
+  type: NodePort
+  ports:
+  - port: 5672
+    name: default
+    targetPort: 5672
+    nodePort: 32765
+  - port: 15672
+    name: management
+    targetPort: 15672
+    nodePort: 32764
+  selector:
+    run: rabbitmq
