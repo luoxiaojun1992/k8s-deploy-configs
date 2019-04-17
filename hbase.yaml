@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: hbase
+  name: hbase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hbase
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: hbase
+    spec:
+      containers:
+      - image: dajobe/hbase
+        ports:
+        - containerPort: 9090
+        name: hbase
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hbase-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9090
+    name: default
+    targetPort: 9090
+    nodePort: 32763
+  selector:
+    run: hbase
