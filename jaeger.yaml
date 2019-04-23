@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: jaeger
+  name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jaeger
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: jaeger
+    spec:
+      containers:
+      - image: jaegertracing/all-in-one:1.11
+        name: jaeger
+        env:
+        - name: COLLECTOR_ZIPKIN_HTTP_PORT
+          value: "9411"
+        ports:
+        - containerPort: 9411
+        - containerPort: 16686
+        - containerPort: 5775
+        - containerPort: 6831
+        - containerPort: 6832
+        - containerPort: 5778
+        - containerPort: 14268
+        - containerPort: 14250
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9411
+    name: zipkin
+    targetPort: 9411
+    nodePort: 32762
+  - port: 16686
+    name: ui
+    targetPort: 16686
+    nodePort: 32761
+  selector:
+    run: jaeger
