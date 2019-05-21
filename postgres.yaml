@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: postgres
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: postgres
+    spec:
+      containers:
+      - image: postgres:9.5
+        name: postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: POSTGRES_USER
+          value: "kong"
+        - name: POSTGRES_DB
+          value: "kong"
+        ports:
+        - containerPort: 5432
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  type: NodePort
+  ports:
+  - port: 5432
+    targetPort: 5432
+    nodePort: 32759
+  selector:
+    run: postgres
