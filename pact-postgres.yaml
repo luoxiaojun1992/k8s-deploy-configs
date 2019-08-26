@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: pact-postgres
+  name: pact-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: pact-postgres
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: pact-postgres
+    spec:
+      containers:
+      - image: postgres:9.5
+        name: pact-postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: POSTGRES_USER
+          value: "pact"
+        - name: POSTGRES_DB
+          value: "pact"
+        ports:
+        - containerPort: 5432
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pact-postgres-service
+spec:
+  type: NodePort
+  ports:
+  - port: 5432
+    targetPort: 5432
+    nodePort: 32752
+  selector:
+    run: pact-postgres
