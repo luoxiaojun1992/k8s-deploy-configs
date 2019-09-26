@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: pika
+  name: pika
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: pika
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: pika
+    spec:
+      containers:
+      - image: luoxiaojun1992/pika:latest
+        name: pika
+        ports:
+        - containerPort: 9221
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pika-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9221
+    name: web
+    targetPort: 9221
+    nodePort: 32751
+  selector:
+    run: pika
