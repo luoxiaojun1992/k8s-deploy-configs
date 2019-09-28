@@ -31,7 +31,7 @@ kind: Service
 metadata:
   name: sw-fw-less-svc
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     run: sw-fw-less
   ports:
@@ -39,3 +39,4 @@ spec:
     port: 9501
     targetPort: 9501
     protocol: TCP
+    nodePort: 32748
