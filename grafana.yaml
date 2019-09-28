@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: grafana
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: grafana
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: grafana
+    spec:
+      containers:
+      - image: grafana/grafana
+        name: grafana
+        ports:
+        - containerPort: 3000
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    name: web
+    targetPort: 3000
+    nodePort: 32749
+  selector:
+    run: grafana
