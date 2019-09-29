@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: prometheus-node-exporter
+  name: prometheus-node-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: prometheus-node-exporter
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: prometheus-node-exporter
+    spec:
+      containers:
+      - image: prom/node-exporter
+        name: prometheus-node-exporter
+        ports:
+        - containerPort: 9100
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-node-exporter-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9100
+    name: web
+    targetPort: 9100
+    nodePort: 32747
+  selector:
+    run: prometheus-node-exporter
