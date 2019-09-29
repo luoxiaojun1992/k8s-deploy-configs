@@ -20,9 +20,16 @@ spec:
       containers:
       - image: prom/prometheus
         name: prometheus
+        volumeMounts:
+        - mountPath: /etc/prometheus/prometheus.yml
+          name: shared-dir
         ports:
         - containerPort: 9090
         resources: {}
+      volumes:
+      - name: shared-dir
+        hostPath:
+          path: /etc/prometheus.yaml
 status: {}
 
 ---
