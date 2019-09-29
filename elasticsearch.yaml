@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: elasticsearch
+  name: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: elasticsearch
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: elasticsearch
+    spec:
+      containers:
+      - image: elasticsearch
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9200
+    name: http
+    targetPort: 9200
+    nodePort: 32745
+  - port: 9300
+    name: tcp
+    targetPort: 9300
+    nodePort: 32744
+  selector:
+    run: elasticsearch
