@@ -22,14 +22,15 @@ spec:
         name: prometheus
         volumeMounts:
         - mountPath: /etc/prometheus/prometheus.yml
-          name: shared-dir
+          name: prometheus-config
+          subPath: prometheus.yml
         ports:
         - containerPort: 9090
         resources: {}
       volumes:
-      - name: shared-dir
+      - name: prometheus-config
         hostPath:
-          path: /etc/prometheus.yaml
+          path: /etc/prometheus
 status: {}
 
 ---
