@@ -22,7 +22,7 @@ spec:
         name: elasticsearch
         env:
         - name: ES_JAVA_OPTS
-          value: "-Xms2g -Xmx2g"
+          value: "-Xms512m -Xmx512m"
         - name: "discovery.type"
           value: "single-node"
         ports:
@@ -31,10 +31,10 @@ spec:
         resources: 
           limits:
             cpu: "2"
-            memory: 4Gi
+            memory: 1Gi
           requests:
             cpu: "2"
-            memory: 4Gi
+            memory: 1Gi
 status: {}
 
 ---

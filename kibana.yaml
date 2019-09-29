@@ -23,8 +23,6 @@ spec:
         env:
         - name: ELASTICSEARCH_HOSTS
           value: "http://elasticsearch-service:9200"
-        - name: XPACK_MONITORING_ENABLED
-          value: "true"
         ports:
         - containerPort: 5601
         resources: {} 
