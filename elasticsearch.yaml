@@ -20,10 +20,21 @@ spec:
       containers:
       - image: elasticsearch:7.3.2
         name: elasticsearch
+        env:
+        - name: ES_JAVA_OPTS
+          value: "-Xms2g -Xmx2g"
+        - name: "discovery.type"
+          value: "single-node"
         ports:
         - containerPort: 9200
         - containerPort: 9300
-        resources: {}
+        resources: 
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: "2"
+            memory: 4Gi
 status: {}
 
 ---
