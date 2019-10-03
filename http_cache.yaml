@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: http-cache
+  name: http-cache
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: http-cache
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: http-cache
+    spec:
+      containers:
+      - image: luoxiaojun1992/http_cache:latest
+        name: http-cache
+        volumeMounts:
+        - mountPath: /go/src/app/src/.env
+          name: http-cache-config
+          subPath: .env
+        - mountPath: /go/src/app/etc/router_config.json
+          name: http-cache-config
+          subPath: router_config.json
+        ports:
+        - containerPort: 8888
+        resources: {} 
+      volumes:
+      - name: http-cache-config
+        hostPath:
+          path: /etc/http_cache
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-cache-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    name: http
+    targetPort: 8888
+    nodePort: 32742
+  selector:
+    run: http-cache
