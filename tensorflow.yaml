@@ -18,7 +18,7 @@ spec:
         run: tensorflow
     spec:
       containers:
-      - image: tensorflow/tensorflow:latest
+      - image: tensorflow/tensorflow:nightly-jupyter
         name: tensorflow
         volumeMounts:
         - mountPath: /tf/notebooks
