@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: tensorflow
+  name: tensorflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: tensorflow
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: tensorflow
+    spec:
+      containers:
+      - image: tensorflow/tensorflow:latest
+        name: tensorflow
+        volumeMounts:
+        - mountPath: /tf/notebooks
+          name: notebooks
+        ports:
+        - containerPort: 8888
+        resources: {} 
+      volumes:
+      - name: notebooks
+        hostPath:
+          path: /root/notebooks
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tensorflow-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    name: http
+    targetPort: 8888
+    nodePort: 32741
+  selector:
+    run: tensorflow
