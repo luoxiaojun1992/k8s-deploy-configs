@@ -23,6 +23,14 @@ spec:
         - containerPort: 9501
         name: sw-fw-less
         resources: {}
+        volumeMounts:
+        - mountPath: /var/www/sw-fw-less/.env
+          name: sw-fw-less-config
+          subPath: .env
+      volumes:
+      - name: sw-fw-less-config
+        hostPath:
+          path: /etc/sw-fw-less
 status: {}
 
 ---
