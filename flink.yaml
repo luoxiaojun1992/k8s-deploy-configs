@@ -62,7 +62,7 @@ metadata:
     run: flink-task
   name: flink-task
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       run: flink-task
