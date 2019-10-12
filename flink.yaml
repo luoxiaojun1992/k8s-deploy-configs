@@ -1,3 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flink-config
+  labels:
+    run: flink
+data:
+  flink-conf.yaml: |+
+    jobmanager.rpc.address: flink-job-service
+    taskmanager.numberOfTaskSlots: 1
+    blob.server.port: 6124
+    jobmanager.rpc.port: 6123
+    taskmanager.rpc.port: 6122
+    jobmanager.heap.size: 1024m
+    taskmanager.heap.size: 1024m
+  log4j.properties: |+
+    log4j.rootLogger=INFO, file
+    log4j.logger.akka=INFO
+    log4j.logger.org.apache.kafka=INFO
+    log4j.logger.org.apache.hadoop=INFO
+    log4j.logger.org.apache.zookeeper=INFO
+    log4j.appender.file=org.apache.log4j.FileAppender
+    log4j.appender.file.file=${log.file}
+    log4j.appender.file.layout=org.apache.log4j.PatternLayout
+    log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+    log4j.logger.org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline=ERROR, file
+
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -39,7 +67,20 @@ spec:
         ports:
         - containerPort: 8081
         - containerPort: 6123
+        - containerPort: 6124
         resources: {} 
+        volumeMounts:
+        - name: flink-config-volume
+          mountPath: /opt/flink/conf
+      volumes:
+      - name: flink-config-volume
+        configMap:
+          name: flink-config
+          items:
+          - key: flink-conf.yaml
+            path: flink-conf.yaml
+          - key: log4j.properties
+            path: log4j.properties
 
 ---
 apiVersion: v1
@@ -57,6 +98,10 @@ spec:
     name: rpc
     targetPort: 6123
     nodePort: 32739
+  - port: 6124
+    name: blob
+    targetPort: 6124
+    nodePort: 32738
   selector:
     run: flink-job
 
@@ -95,7 +140,6 @@ spec:
         - name: JOB_MANAGER_RPC_ADDRESS
           value: "flink-job-service"
         ports:
-        - containerPort: 6121
         - containerPort: 6122
         resources: {} 
         livenessProbe:
@@ -103,6 +147,18 @@ spec:
             port: 6122
           initialDelaySeconds: 30
           periodSeconds: 60
+        volumeMounts:
+        - name: flink-config-volume
+          mountPath: /opt/flink/conf/
+      volumes:
+      - name: flink-config-volume
+        configMap:
+          name: flink-config
+          items:
+          - key: flink-conf.yaml
+            path: flink-conf.yaml
+          - key: log4j.properties
+            path: log4j.properties
       initContainers:
         - name: init-job
           image: busybox
@@ -117,10 +173,6 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 6121
-    name: data
-    targetPort: 6121
-    nodePort: 32738
   - port: 6122
     name: rpc
     targetPort: 6122
