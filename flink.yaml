@@ -22,7 +22,7 @@ spec:
         name: flink-job
         env:
         - name: JOB_MANAGER_RPC_ADDRESS
-          value: "jobmanager"
+          value: "flink-job-service"
         workingDir: /opt/flink
         command: ["/bin/bash", "-c", "$FLINK_HOME/bin/jobmanager.sh start;\
           while :;
@@ -93,7 +93,7 @@ spec:
           done"]
         env:
         - name: JOB_MANAGER_RPC_ADDRESS
-          value: "jobmanager"
+          value: "flink-job-service"
         ports:
         - containerPort: 6121
         - containerPort: 6122
