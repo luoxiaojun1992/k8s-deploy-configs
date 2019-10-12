@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       run: flink-job
-  strategy: {}
+  serviceName: flink-job-service
   template:
     metadata:
       creationTimestamp: null
@@ -21,8 +21,8 @@ spec:
       - image: flink:latest
         name: flink-job
         env:
-        - name:
-          value:
+        - name: JOB_MANAGER_RPC_ADDRESS
+          value: "jobmanager"
         livenessProbe:
           tcpSocket:
             port: 6123
@@ -76,6 +76,9 @@ spec:
       containers:
       - image: flink:latest
         name: flink-task
+        env:
+        - name: JOB_MANAGER_RPC_ADDRESS
+          value: "jobmanager"
         ports:
         - containerPort: 6121
         - containerPort: 6122
