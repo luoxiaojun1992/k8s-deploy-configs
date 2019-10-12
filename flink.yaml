@@ -23,7 +23,14 @@ spec:
         env:
         - name: JOB_MANAGER_RPC_ADDRESS
           value: "jobmanager"
-        command: ["jobmanager"]
+        workingDir: /opt/flink
+        command: ["/bin/bash", "-c", "$FLINK_HOME/bin/jobmanager.sh start;\
+          while :;
+          do
+            if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
+              then tail -f -n +1 log/*jobmanager*.log;
+            fi;
+          done"]
         livenessProbe:
           tcpSocket:
             port: 6123
@@ -76,7 +83,14 @@ spec:
       containers:
       - image: flink:latest
         name: flink-task
-        command: ["taskmanager"]
+        workingDir: /opt/flink
+        command: ["/bin/bash", "-c", "$FLINK_HOME/bin/taskmanager.sh start; \
+          while :;
+          do
+            if [[ -f $(find log -name '*taskmanager*.log' -print -quit) ]];
+              then tail -f -n +1 log/*taskmanager*.log;
+            fi;
+          done"]
         env:
         - name: JOB_MANAGER_RPC_ADDRESS
           value: "jobmanager"
