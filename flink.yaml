@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    run: flink-job
+  name: flink-job
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: flink-job
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: flink-job
+    spec:
+      containers:
+      - image: flink:latest
+        name: flink-job
+        env:
+        - name:
+          value:
+        livenessProbe:
+          tcpSocket:
+            port: 6123
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        ports:
+        - containerPort: 8081
+        - containerPort: 6123
+        resources: {} 
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-job-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8081
+    name: http
+    targetPort: 8081
+    nodePort: 32740
+  - port: 6123
+    name: rpc
+    targetPort: 6123
+    nodePort: 32739
+  selector:
+    run: flink-job
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: flink-task
+  name: flink-task
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: flink-task
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: flink-task
+    spec:
+      containers:
+      - image: flink:latest
+        name: flink-task
+        ports:
+        - containerPort: 6121
+        - containerPort: 6122
+        resources: {} 
+        livenessProbe:
+          tcpSocket:
+            port: 6122
+          initialDelaySeconds: 30
+          periodSeconds: 60
+      initContainers:
+        - name: init-job
+          image: busybox
+          command: ['sh', '-c', 'until nslookup flink-job-service; do echo waiting for flink-job-service; sleep 2; done;'] 
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-task-service
+spec:
+  type: NodePort
+  ports:
+  - port: 6121
+    name: data
+    targetPort: 6121
+    nodePort: 32738
+  - port: 6122
+    name: rpc
+    targetPort: 6122
+    nodePort: 32737
+
+  selector:
+    run: flink-task
