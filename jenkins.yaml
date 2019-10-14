@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: jenkins
+  name: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jenkins
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: jenkins
+    spec:
+      containers:
+      - image: jenkins:2.60.3
+        ports:
+        - containerPort: 50000
+          name: slave
+        - containerPort: 8080
+          name: web
+        name: jenkins
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+      volumes:
+      - name: jenkins-home
+        hostPath:
+          path: /root/jenkins
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+spec:
+  type: NodePort
+  ports:
+  - port: 50000
+    targetPort: 50000
+    nodePort: 32736
+    name: slave
+  - port: 8080
+    targetPort: 8080
+    nodePort: 32735
+    name: web
+  selector:
+    run: jenkins
