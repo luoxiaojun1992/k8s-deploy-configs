@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: jenkins-agent-002
+  name: jenkins-agent-002
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jenkins-agent-002
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: jenkins-agent-002
+    spec:
+      containers:
+      - image: jenkins/jnlp-slave:3.35-5
+        name: jenkins-agent-002
+        env:
+        - name: JENKINS_URL
+          value: "http://jenkins-service:8080"
+        - name: JENKINS_SECRET
+          value: "@/home/jenkins/agent/secret-file"
+        - name: JENKINS_AGENT_NAME
+          value: "agent-002"
+        - name: JENKINS_AGENT_WORKDIR
+          value: "/home/jenkins/agent"
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/jenkins/agent
+          name: jenkins-agent-home
+      volumes:
+      - name: jenkins-agent-home
+        hostPath:
+          path: /root/jenkins-agent-002
+status: {}
