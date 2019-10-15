@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: gitlab
+  name: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: gitlab
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: gitlab
+    spec:
+      containers:
+      - image: gitlab/gitlab-ce:12.3.5-ce.0
+        ports:
+        - containerPort: 443
+          name: ssl
+        - containerPort: 80
+          name: web
+        - containerPort: 22
+          name: ssh
+        name: gitlab
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/opt/gitlab
+          name: gitlab-data
+      volumes:
+      - name: gitlab-data
+        hostPath:
+          path: /root/gitlab
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-service
+spec:
+  type: NodePort
+  ports:
+  - port: 443
+    targetPort: 443
+    nodePort: 32734
+    name: ssl
+  - port: 80
+    targetPort: 80
+    nodePort: 32733
+    name: web
+  - port: 22
+    nodePort: 32732
+    targetPort: 22
+    name: ssh
+  selector:
+    run: gitlab
