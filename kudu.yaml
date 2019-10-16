@@ -35,13 +35,6 @@ spec:
           name: master-web
         name: kudu
         resources: {}
-        volumeMounts:
-        - mountPath: /var/lib/kudu
-          name: kudu-data
-      volumes:
-        - name: kudu-data
-          hostPath:
-            path: /root/kudu
 status: {}
 
 ---
