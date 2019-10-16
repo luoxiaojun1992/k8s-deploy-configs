@@ -26,13 +26,13 @@ spec:
           value: "--trusted_subnets 0.0.0.0/0"
         ports:
         - containerPort: 7050
-          name: master-web
+          name: tserver-rpc
         - containerPort: 7051
           name: master-rpc
         - containerPort: 8050
           name: tserver-web
         - containerPort: 8051
-          name: tserver-rpc
+          name: master-web
         name: kudu
         resources: {}
         volumeMounts:
@@ -55,7 +55,7 @@ spec:
   - port: 7050
     targetPort: 7050
     nodePort: 32725
-    name: master-web
+    name: tserver-rpc
   - port: 7051
     targetPort: 7051
     nodePort: 32724
@@ -67,6 +67,6 @@ spec:
   - port: 8051
     nodePort: 32722
     targetPort: 8051
-    name: tserver-rpc
+    name: master-web
   selector:
     run: kudu
