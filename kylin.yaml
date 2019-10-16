@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: kylin
+  name: kylin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kylin
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: kylin
+    spec:
+      containers:
+      - image: apachekylin/apache-kylin-standalone:3.0.0-alpha2
+        ports:
+        - containerPort: 7070
+        - containerPort: 8088
+        - containerPort: 50070
+        - containerPort: 8032
+        - containerPort: 8042
+        - containerPort: 60010
+        name: kylin
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kylin-service
+spec:
+  type: NodePort
+  ports:
+  - port: 7070
+    targetPort: 7070
+    nodePort: 32731
+    name: kylin
+  - port: 8088
+    targetPort: 8088
+    nodePort: 32730
+    name: yarn-web
+  - port: 50070
+    nodePort: 32729
+    targetPort: 50070
+    name: hdfs
+  - port: 8032
+    nodePort: 32728
+    targetPort: 8032
+    name: yarn
+  - port: 8042
+    nodePort: 32727
+    targetPort: 8042
+    name: yarn-node-web
+  - port: 60010
+    nodePort: 32726
+    targetPort: 60010
+    name: hbase
+  selector:
+    run: kylin
