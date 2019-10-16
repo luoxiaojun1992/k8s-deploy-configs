@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: kudu
+  name: kudu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kudu
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: kudu
+    spec:
+      containers:
+      - image: mweindel/kudu-docker-slim:release-1.10.0-1
+        env:
+        - name: KUDU_MASTER_EXTRA_OPTS
+          value: "--trusted_subnets 0.0.0.0/0"
+        - name: KUDU_TSERVER_EXTRA_OPTS
+          value: "--trusted_subnets 0.0.0.0/0"
+        ports:
+        - containerPort: 7050
+          name: master-web
+        - containerPort: 7051
+          name: master-rpc
+        - containerPort: 8050
+          name: tserver-web
+        - containerPort: 8051
+          name: tserver-rpc
+        name: kudu
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/kudu
+          name: kudu-data
+      volumes:
+        - name: kudu-data
+          hostPath:
+            path: /root/kudu
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kudu-service
+spec:
+  type: NodePort
+  ports:
+  - port: 7050
+    targetPort: 7050
+    nodePort: 32725
+    name: master-web
+  - port: 7051
+    targetPort: 7051
+    nodePort: 32724
+    name: master-rpc
+  - port: 8050
+    nodePort: 32723
+    targetPort: 8050
+    name: tserver-web
+  - port: 8051
+    nodePort: 32722
+    targetPort: 8051
+    name: tserver-rpc
+  selector:
+    run: kudu
