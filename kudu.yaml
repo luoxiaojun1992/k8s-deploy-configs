@@ -18,12 +18,12 @@ spec:
         run: kudu
     spec:
       containers:
-      - image: mweindel/kudu-docker-slim:release-1.10.0-1
+      - image: usuresearch/kudu-docker-slim:release-v1.10.0-1
         env:
         - name: KUDU_MASTER_EXTRA_OPTS
-          value: "--trusted_subnets 0.0.0.0/0"
+          value: "--webserver_advertised_addresses 47.110.155.53:32722 --rpc_advertised_addresses 47.110.155.53:32724 --trusted_subnets 0.0.0.0/0 --rpc_encryption disabled --rpc_authentication disabled"
         - name: KUDU_TSERVER_EXTRA_OPTS
-          value: "--trusted_subnets 0.0.0.0/0"
+          value: "--webserver_advertised_addresses 47.110.155.53:32723 --rpc_advertised_addresses 47.110.155.53:32725 --trusted_subnets 0.0.0.0/0 --rpc_encryption disabled --rpc_authentication disabled --tserver_master_addrs 47.110.155.53:32724"
         ports:
         - containerPort: 7050
           name: tserver-rpc
