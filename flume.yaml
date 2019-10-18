@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: flume
+  name: flume
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: flume
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: flume
+    spec:
+      containers:
+      - image: luoxioajun1992/flume:latest
+        env:
+        - name: AGENT
+          value: "a1"
+        name: flume
+        resources: {}
+        volumeMounts:
+        - name: flume-files
+          mountPath: /apache-flume/external
+          subPath: external
+        - name: flume-files
+          mountPath: /apache-flume/conf
+          subPath: flume-conf.properties
+    volumes:
+    - name: flume-files
+      hostPath:
+        path: /root/flume
+status: {}
