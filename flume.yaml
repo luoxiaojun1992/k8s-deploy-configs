@@ -29,7 +29,7 @@ spec:
           mountPath: /apache-flume/external
           subPath: external
         - name: flume-files
-          mountPath: /apache-flume/conf
+          mountPath: /apache-flume/conf/flume-conf.properties
           subPath: flume-conf.properties
     volumes:
     - name: flume-files
