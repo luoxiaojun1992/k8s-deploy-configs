@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: impala
+  name: impala
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: impala
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: impala
+    spec:
+      containers:
+      - image: luoxiaojun1992/impala:latest
+        ports:
+        - containerPort: 25010
+          name: state
+        - containerPort: 25020
+          name: catalog
+        - containerPort: 25000
+          name: daemon
+        name: impala
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: impala-service
+spec:
+  type: NodePort
+  ports:
+  - port: 25010
+    targetPort: 25010
+    nodePort: 32721
+    name: state
+  - port: 25020
+    targetPort: 25020
+    nodePort: 32720
+    name: catalog
+  - port: 25000
+    nodePort: 32719
+    targetPort: 25000
+    name: daemon
+  selector:
+    run: impala
