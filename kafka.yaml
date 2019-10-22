@@ -7,6 +7,7 @@ metadata:
   name: zookeeper
 spec:
   replicas: 1
+  serviceName: zookeeper
   selector:
     matchLabels:
       run: zookeeper
