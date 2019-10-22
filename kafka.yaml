@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    run: zookeeper
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: zookeeper
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: zookeeper
+    spec:
+      containers:
+      - image: bitnami/zookeeper:3.5.5
+        env:
+        - name: ALLOW_ANONYMOUS_LOGIN
+          value: "yes"
+        - containerPort: 2181
+        name: zookeeper
+        resources: {}
+        livenessProbe:
+          tcpSocket:
+            port: 2181
+          initialDelaySeconds: 30
+          periodSeconds: 60
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+spec:
+  type: NodePort
+  ports:
+  - port: 2181
+    targetPort: 2181
+    nodePort: 32721
+  selector:
+    run: zookeeper
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: kafka
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kafka
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: kafka
+    spec:
+      containers:
+      - image: bitnami/kafka:2.3.0
+        env:
+        - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+          value: "zookeeper-service:2181"
+        - name: ALLOW_PLAINTEXT_LISTENER
+          value: "yes"
+        name: kafka
+        ports:
+        - containerPort: 9092
+        resources: {}
+        volumeMounts:
+        - name: kafka-data-volume
+          mountPath: /bitnami/kafka
+      volumes:
+      - name: kafka-data-volume
+        hostPath:
+          path: /root/kafka
+      initContainers:
+        - name: init-job
+          image: busybox
+          command: ['sh', '-c', 'until nslookup zookeeper-service; do echo waiting for zookeeper-service; sleep 2; done;']
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9092
+    targetPort: 9092
+    nodePort: 32720
+
+  selector:
+    run: kafka
