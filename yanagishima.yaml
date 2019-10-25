@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: yanagishima
+  name: yanagishima
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: yanagishima
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: yanagishima
+    spec:
+      containers:
+      - image: luoxiaojun1992/yanagishima:latest
+        name: yanagishima
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - name: yanagishima-config
+          mountPath: /usr/src/myapp/yanagishima-21.0/conf/yanagishima.properties
+          subPath: yanagishima.properties
+      volumes:
+      - name: yanagishima-config
+        hostPath:
+          path: /root/yanagishima
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yanagishima-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 32717
+
+  selector:
+    run: yanagishima
