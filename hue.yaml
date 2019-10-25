@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: hue
+  name: hue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hue
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: hue
+    spec:
+      containers:
+      - image: gethue/hue:20191023-135001
+        name: hue
+        ports:
+        - containerPort: 8888
+        resources: {}
+        env:
+        - name: CLASSPATH
+          value: "/usr/share/hue/presto-jdbc-323.jar:$CLASSPATH"
+        volumeMounts:
+        - name: hue-config
+          mountPath: /usr/share/hue/desktop/conf/hue-overrides.ini
+          subPath: hue-overrides.ini
+        - name: hue-config
+          mountPath: /usr/share/hue/desktop/conf/hue.ini
+          subPath: hue.ini
+        - name: hue-config
+          mountPath: /usr/share/hue/presto-jdbc-323.jar
+          subPath: presto-jdbc-323.jar
+      volumes:
+      - name: hue-config
+        hostPath:
+          path: /root/hue
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hue-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    targetPort: 8888
+    nodePort: 32718
+
+  selector:
+    run: hue
