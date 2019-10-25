@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: presto
+  name: presto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: presto
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: presto
+    spec:
+      containers:
+      - image: prestosql/presto:322
+        name: presto
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - name: kudu-config
+          mountPath: /usr/lib/presto/default/etc/catalog/kudu.properties
+          subPath: kudu.properties
+      volumes:
+      - name: kudu-config
+        hostPath:
+          path: /root/presto
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: presto-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 32719
+
+  selector:
+    run: presto
