@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: impala
+  name: impala
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: impala
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: impala
+    spec:
+      containers:
+      - image: luoxiaojun1992/impala-kudu:latest
+        name: impala
+        ports:
+        - containerPort: 8020
+        - containerPort: 9083
+        - containerPort: 15000
+        - containerPort: 15001
+        - containerPort: 15002
+        - containerPort: 21000
+        - containerPort: 21050
+        - containerPort: 22000
+        - containerPort: 23000
+        - containerPort: 23020
+        - containerPort: 24000
+        - containerPort: 25000
+        - containerPort: 25010
+        - containerPort: 26000
+        - containerPort: 28000
+        - containerPort: 50010
+        - containerPort: 25020
+        - containerPort: 50070
+        - containerPort: 50075
+        resources: {}
+        volumeMounts:
+        - name: impala-config
+          mountPath: /etc/default/impala
+          subPath: impala
+      volumes:
+      - name: impala-config
+        hostPath:
+          path: /root/impala
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: impala-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8020
+    name: port1
+    targetPort: 8020
+    nodePort: 32716
+  - port: 9083
+    name: port2
+    targetPort: 9083
+    nodePort: 32715
+  - port: 15000
+    name: port3
+    targetPort: 15000
+    nodePort: 32714
+  - port: 15001
+    name: port4
+    targetPort: 15001
+    nodePort: 32713
+  - port: 15002
+    name: port5
+    targetPort: 15002
+    nodePort: 32712
+  - port: 21000
+    name: port6
+    targetPort: 21000
+    nodePort: 32711
+  - port: 21050
+    name: port7
+    targetPort: 21050
+    nodePort: 32710
+  - port: 22000
+    name: port8
+    targetPort: 22000
+    nodePort: 32709
+  - port: 23000
+    name: port9
+    targetPort: 23000
+    nodePort: 32708
+  - port: 23020
+    name: port10
+    targetPort: 23020
+    nodePort: 32707
+  - port: 24000
+    name: port11
+    targetPort: 24000
+    nodePort: 32706
+  - port: 25000
+    name: port12
+    targetPort: 25000
+    nodePort: 32705
+  - port: 25010
+    name: port13
+    targetPort: 25010
+    nodePort: 32704
+  - port: 26000
+    name: port14
+    targetPort: 26000
+    nodePort: 32703
+  - port: 28000
+    name: port15
+    targetPort: 28000
+    nodePort: 32702
+  - port: 50010
+    name: port16
+    targetPort: 50010
+    nodePort: 32701
+  - port: 25020
+    name: port17
+    targetPort: 25020
+    nodePort: 32700
+  - port: 50070
+    name: port18
+    targetPort: 50070
+    nodePort: 32699
+  - port: 50075
+    name: port19
+    targetPort: 50075
+    nodePort: 32698
+  selector:
+    run: impala
