@@ -71,6 +71,8 @@ spec:
         env:
         - name: KAFKA_CFG_ZOOKEEPER_CONNECT
           value: "zookeeper-service:2181"
+        - name: KAFKA_CFG_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://47.110.155.53:32720"
         - name: ALLOW_PLAINTEXT_LISTENER
           value: "yes"
         name: kafka
